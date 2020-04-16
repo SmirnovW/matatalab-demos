@@ -1,0 +1,90 @@
+html, body {
+    height: 100%;
+}
+#app {
+    height: 100%;
+}
+
+.container {
+    height: 100%;
+}
+
+.main {
+    height: 100%;
+}
+
+.colors {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    justify-content: space-between;
+    margin-top: 120px;
+}
+
+.color {
+    flex: 1 0 10rem;
+    height: 10rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin: 10px;
+    border-radius: 50%;
+}
+
+.white {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+.black {
+    background: #000;
+}
+
+.red {
+   background: #FF3409;
+}
+
+.light_green {
+   background: #C4E538;
+}
+
+.blue {
+    background: #0652DD;
+}
+.green {
+    background: #009432;
+}
+
+.violet {
+    background: #be2edd;
+}
+
+.init {
+    background: #fd9644;
+    width: 200px;
+    height: 30px;
+    font-weight: 700;
+    font-family: sans-serif;
+    font-size: 20px;
+    color: #fff;
+}
+
+.robotWrapper {
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.robot {
+    position: relative;
+    z-index: 10;
+}
+
+.robotEyes {
+    left: 50%;
+    position: absolute;
+    width: 180px;
+    height: 80px;
+    z-index: 5;
+    top: 50%;
+    margin-left: -90px;
+}

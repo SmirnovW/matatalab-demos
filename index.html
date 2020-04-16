@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <div id="app">
+            <div class="container">
+                <header class="header">
+                    <button @click="init" class="init">Init Robot</button>
+                </header>
+                <main class="main">
+                    <div class="robotWrapper">
+                        <img class="robot" width="360" height="360" src="./images/robot.png" alt="Robot">
+                        <div :class="['robotEyes', currentColor]"></div>
+                    </div>
+                    <div class="colors">
+                        <button
+                            v-for="color in colors"
+                            :class="[color.name, 'color']"
+                            @click="setColor(color.value, color.name)"
+                        ></button>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <script src="./index.js"></script>
+    </body>
+</html>

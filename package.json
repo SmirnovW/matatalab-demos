@@ -1,0 +1,23 @@
+{
+  "name": "matatalab-demos",
+  "version": "1.0.0",
+  "description": "demos",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SmirnovW/matatalab-demos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SmirnovW/matatalab-demos/issues"
+  },
+  "homepage": "https://github.com/SmirnovW/matatalab-demos#readme",
+  "dependencies": {
+    "server": "^1.0.27"
+  }
+}

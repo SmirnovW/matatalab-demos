@@ -40,7 +40,7 @@ var app = new Vue({
         setColor(colorValue, colorName) {
             console.log(colorName);
             this.currentColor = colorName;
-            //eyes(this.blueToothPrimaryService, colorValue);
+            eyes(this.blueToothPrimaryService, colorValue);
         },
         init() {
             this.blueToothPrimaryService = connect();

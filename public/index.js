@@ -15,7 +15,7 @@ let isRobotPathVisible = false;
 
 let baseVector = null;
 
-function mouseClicked(event) {
+function touchEnded(event) {
     if (event.target.id === 'defaultCanvas0') {
         if (!baseVector) {
             baseVector = createVector(mouseX, mouseY);

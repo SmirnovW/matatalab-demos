@@ -32,12 +32,25 @@ const COLORS = {
 let currentPath = 0;
 
 let delay = (time)=>{
-    return new Promise(() =>{
-        setTimeout(() => {}, time);
+    return new Promise((res) =>{
+        setTimeout(res, time);
     });
 };
 
 let isFirstStep = true;
+
+function lineDistance( point1, point2 ){
+    var xs = 0;
+    var ys = 0;
+
+    xs = point2.x - point1.x;
+    xs = xs * xs;
+
+    ys = point2.y - point1.y;
+    ys = ys * ys;
+
+    return Math.sqrt( xs + ys );
+}
 
 var app = new Vue({
     el: '#app',
@@ -74,9 +87,18 @@ var app = new Vue({
                 robot.baseVector.set(vectors[currentPath][1].x, vectors[currentPath][1].y);
                 robot.vector = p5.Vector.mult(robot.vector, 2);
 
-                const distance = vectors[currentPath][0].dist(vectors[currentPath][1]);
+//                const distance = vectors[currentPath][0].dist(vectors[currentPath][1]);
+                const distance = lineDistance(vectors[currentPath][0], vectors[currentPath][1]);
 
-                const time = distance * (currentPath === 0 ? 5 : 10);
+                const time = distance * 10;
+
+/*                console.log('mag', v2.mag() * 10);
+                */
+                console.log('lineDistance', lineDistance(vectors[currentPath][0], vectors[currentPath][1]));
+                console.log('time',time);
+/*
+                console.log('dot', p5.Vector.dot(v1, v2));*/
+                console.log('--------------');
                 let degree = degrees(angleBetween);
                 let direction = COMMANDS.TURN_RIGHT;
 
@@ -90,7 +112,7 @@ var app = new Vue({
 
                 await delay(time);
                 await stop(this.blueToothPrimaryService);
-
+                //await delay(500);
                 currentPath += 1;
 
                 loop();
@@ -122,6 +144,7 @@ const COMMANDS = {
     EYE: 100,
     TURN_LEFT: 33,
     TURN_RIGHT: 34,
+    CANCEL: 132,
 };
 
 
@@ -146,6 +169,15 @@ function getWheelCommand(leftWheel, rightWheel) {
 
 function getStopCommand() {
     return getWheelCommand(6, 6);
+}
+
+function getCancelCommand() {
+    const data = [COMMANDS.CANCEL];
+    const buffer = new ArrayBuffer(1);
+    const bufferView = new Int8Array(buffer);
+    bufferView.set(data);
+
+    return buffer;
 }
 
 function getEyesCommand(color, saturation) {
@@ -226,4 +258,18 @@ async function stop(connection) {
         console.log('stop result', result);
     })
     .catch(error => { console.log('stop', error); });
+}
+
+async function cancel(connection) {
+    return connection
+    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    .then(characteristic => {
+        return characteristic.writeValue(
+            getCancelCommand()
+        );
+    })
+    .then(result => {
+        console.log('cancel result', result);
+    })
+    .catch(error => { console.log('cancel', error); });
 }

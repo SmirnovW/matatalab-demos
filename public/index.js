@@ -1,5 +1,5 @@
 function setup() {
-    const canvas = createCanvas(displayWidth, displayHeight);
+    const canvas = createCanvas(640, 480);
     canvas.parent('sketch-holder');
     background(240);
     noLoop();
@@ -15,8 +15,8 @@ let isRobotPathVisible = false;
 
 let baseVector = null;
 
-function addPoint(id) {
-    if (id === 'defaultCanvas0') {
+function mouseClicked(event) {
+    if (event.target.id === 'defaultCanvas0') {
         if (!baseVector) {
             baseVector = createVector(mouseX, mouseY);
             vectors.push([createVector(0, 0)]);
@@ -31,14 +31,6 @@ function addPoint(id) {
             vectors.push([newVector]);
         }
     }
-}
-
-function touchEnded(event) {
-    addPoint(event.target.id);
-}
-
-function mouseClicked(event) {
-    addPoint(event.target.id);
 
     loop();
 

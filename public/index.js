@@ -33,8 +33,6 @@ function touchEnded(event) {
     }
 
     loop();
-
-    return false;
 }
 
 function draw() {

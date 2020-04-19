@@ -1,8 +1,14 @@
 html, body {
     height: 100%;
 }
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
 #app {
-    height: 100%;
+//    height: 100%;
 }
 
 .container {
@@ -10,6 +16,7 @@ html, body {
 }
 
 .main {
+    margin-top: 30px;
     height: 100%;
 }
 
@@ -56,7 +63,7 @@ html, body {
     background: #be2edd;
 }
 
-.init {
+.button {
     background: #fd9644;
     width: 200px;
     height: 30px;

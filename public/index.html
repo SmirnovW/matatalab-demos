@@ -9,24 +9,22 @@
         <div id="app">
             <div class="container">
                 <header class="header">
-                    <button @click="init" class="init">Init Robot</button>
+                    <button @click="init" class="button">Demo 1</button>
+                    <button @click="init" class="button">Demo 2</button>
                 </header>
                 <main class="main">
-                    <div class="robotWrapper">
-                        <img class="robot" width="360" height="360" src="images/robot.png" alt="Robot">
-                        <div :class="['robotEyes', currentColor]"></div>
-                    </div>
-                    <div class="colors">
-                        <button
-                            v-for="color in colors"
-                            :class="[color.name, 'color']"
-                            @click="setColor(color.value, color.name)"
-                        ></button>
-                    </div>
+                    <button @click="init" class="button">Init Robot</button>
+                    <button @click="robotDraw">draw</button>
+                    <button @click="clear">clear</button>
+                    <input type="checkbox" id="checkbox" :checked="isRobotPathVisible" v-model="isRobotPathVisible">
+                    <label for="checkbox" @click="handleClick">Show robot's path</label>
+                    <div id="sketch-holder"></div>
                 </main>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
         <script src="index.js"></script>
+        <script src="robot.js"></script>
     </body>
 </html>

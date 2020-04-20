@@ -12,6 +12,18 @@ body {
 //    height: 100%;
 }
 
+.demo {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+.actions {
+    margin: 10px 0;
+}
+
 .container {
     height: 100%;
     width: 100%;

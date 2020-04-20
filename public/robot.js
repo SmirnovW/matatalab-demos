@@ -61,10 +61,19 @@ var app = new Vue({
             blueToothPrimaryService: null,
             colors: COLORS,
             currentColor: 'black',
+            currentDemo: 1,
         };
     },
     methods: {
+        switchDemo(demoId) {
+            this.currentDemo = demoId;
+        },
+        async listen() {
+            await sensorWait(this.blueToothPrimaryService);
+            await toListen(this.blueToothPrimaryService);
+        },
         handleClick() {
+            console.log(isRobotPathVisible);
             this.isRobotPathVisible = !this.isRobotPathVisible;
             isRobotPathVisible = this.isRobotPathVisible;
         },
@@ -73,8 +82,9 @@ var app = new Vue({
             this.currentColor = colorName;
             eyes(this.blueToothPrimaryService, colorValue);
         },
-        init() {
-            this.blueToothPrimaryService = connect();
+        async init() {
+            this.blueToothPrimaryService = await connect();
+            console.log('this.blueToothPrimaryService', this.blueToothPrimaryService);
         },
         async robotDraw() {
             if (vectors[currentPath].length > 1) {
@@ -87,18 +97,9 @@ var app = new Vue({
                 robot.baseVector.set(vectors[currentPath][1].x, vectors[currentPath][1].y);
                 robot.vector = p5.Vector.mult(robot.vector, 2);
 
-//                const distance = vectors[currentPath][0].dist(vectors[currentPath][1]);
-                const distance = lineDistance(vectors[currentPath][0], vectors[currentPath][1]);
+                const distance = vectors[currentPath][0].dist(vectors[currentPath][1]);
 
                 const time = distance * 10;
-
-/*                console.log('mag', v2.mag() * 10);
-                */
-                console.log('lineDistance', lineDistance(vectors[currentPath][0], vectors[currentPath][1]));
-                console.log('time',time);
-/*
-                console.log('dot', p5.Vector.dot(v1, v2));*/
-                console.log('--------------');
                 let degree = degrees(angleBetween);
                 let direction = COMMANDS.TURN_RIGHT;
 
@@ -112,7 +113,6 @@ var app = new Vue({
 
                 await delay(time);
                 await stop(this.blueToothPrimaryService);
-                //await delay(500);
                 currentPath += 1;
 
                 loop();
@@ -138,16 +138,14 @@ var app = new Vue({
     }
 });
 
-
 const COMMANDS = {
     WHEEl: 100,
     EYE: 100,
     TURN_LEFT: 33,
     TURN_RIGHT: 34,
     CANCEL: 132,
+    SHAKE: 102,
 };
-
-
 
 function getTurnCommand(direction, angle) {
     const data = [direction, angle];
@@ -189,8 +187,17 @@ function getEyesCommand(color, saturation) {
     return buffer;
 }
 
+function getShakeListener() {
+    const data = [COMMANDS.SHAKE, 16, 9];
+    const buffer = new ArrayBuffer(3);
+    const bufferView = new Int8Array(buffer);
+    bufferView.set(data);
+
+    return buffer;
+}
+
 async function connect() {
-    const conn = await window.navigator.bluetooth.requestDevice({
+    return window.navigator.bluetooth.requestDevice({
         filters: [{
             services: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
         }]
@@ -200,13 +207,10 @@ async function connect() {
         return server.getPrimaryService('6e400001-b5a3-f393-e0a9-e50e24dcca9e')
     })
     .catch(error => { console.log(error); });
-
-    return conn;
 }
 
 function eyes(connection, color) {
-    connection
-    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
     .then(characteristic => {
         return characteristic.writeValue(
             getEyesCommand(color, 5)
@@ -219,8 +223,7 @@ function eyes(connection, color) {
 }
 
 async function move(connection) {
-    return connection
-    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    return connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
     .then(characteristic => {
         return characteristic.writeValue(
             getWheelCommand(8, 8)
@@ -233,8 +236,7 @@ async function move(connection) {
 }
 
 async function turn(connection, direction, angle) {
-    return connection
-    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    return connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
     .then(characteristic => {
         return characteristic.writeValue(
             getTurnCommand(direction, angle)
@@ -247,8 +249,7 @@ async function turn(connection, direction, angle) {
 }
 
 async function stop(connection) {
-    return connection
-    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    return connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
     .then(characteristic => {
         return characteristic.writeValue(
             getStopCommand()
@@ -261,8 +262,7 @@ async function stop(connection) {
 }
 
 async function cancel(connection) {
-    return connection
-    .then(service => service.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e'))
+    return connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
     .then(characteristic => {
         return characteristic.writeValue(
             getCancelCommand()
@@ -273,3 +273,47 @@ async function cancel(connection) {
     })
     .catch(error => { console.log('cancel', error); });
 }
+
+async function sensorWait(connection) {
+    return connection.getCharacteristic('6e400002-b5a3-f393-e0a9-e50e24dcca9e')
+    .then(characteristic => {
+        return characteristic.writeValue(
+            getShakeListener()
+        );
+    })
+    .then(result => {
+        console.log('sensor wait result', result);
+    })
+    .catch(error => { console.log('sensor wait', error); });
+}
+
+async function stopListen(connection) {
+    return connection.getCharacteristic('6e400003-b5a3-f393-e0a9-e50e24dcca9e')
+    .then(characteristic => characteristic.stopNotifications())
+    .then(characteristic => {
+        // Set up event listener for when characteristic value changes.
+        characteristic.removeEventListener('characteristicvaluechanged', handleChanged);
+        return characteristic;
+    })
+    .catch(error => { console.log(error); });
+}
+
+async function toListen(connection) {
+    return connection
+    .getCharacteristic('6e400003-b5a3-f393-e0a9-e50e24dcca9e')
+    .then(characteristic => {
+        // Set up event listener for when characteristic value changes.
+        characteristic.addEventListener('characteristicvaluechanged', handleChanged);
+        return characteristic;
+    })
+    .then(characteristic => characteristic.startNotifications())
+    .catch(error => { console.log(error); });
+}
+
+function handleChanged(event) {
+    console.log('Не тряси меня!');
+    stopListen(event.target.service).then(characteristic => {
+        toListen(characteristic.service);
+    });
+}
+

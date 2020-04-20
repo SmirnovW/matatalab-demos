@@ -1,8 +1,11 @@
 function setup() {
-    const canvas = createCanvas(640, 480);
-    canvas.parent('sketch-holder');
-    background(240);
-    noLoop();
+    console.log(document.getElementById('demo1'));
+    if (document.getElementById('demo1')) {
+        const canvas = createCanvas(640, 480);
+        canvas.parent('sketch-holder');
+        background(240);
+        noLoop();
+    }
 }
 
 let vectors = [];
